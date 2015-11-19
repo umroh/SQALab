@@ -7,6 +7,61 @@ from lists.models import Item
 from lists.views import home_page
 
 # Create your tests here.
+
+class ListViewTest(TestCase):
+	
+	
+	def test_uses_list_template(self):
+		response=self.client.get('/lists/the-only-list-in-the-world/')
+		self.assertTemplateUsed(response, 'list.html')
+		
+	def test_displays_all_items(self):
+		Item.objects.create(text='itemey 1')
+		Item.objects.create(text='itemey 2')
+		
+		response = self.client.get('/lists/the-only-list-in-the-world/')
+		
+		self.assertContains(response ,'itemey 1')
+		self.assertContains(response ,'itemey 2')
+		
+	def test_home_page_displays_feed_zero(self):
+		response =self.client.get('/lists/the-only-list-in-the-world/')
+		
+		self.assertContains(response,'Holiday, I am coming!')
+		
+	def test_home_page_displays_feed_less_than_five(self):
+		Item.objects.create(text='itemey 1')
+		Item.objects.create(text='itemey 2')
+		Item.objects.create(text='itemey 3')
+		Item.objects.create(text='itemey 4')
+		
+		response = self.client.get('/lists/the-only-list-in-the-world/')
+		
+		self.assertContains(response ,'itemey 1')
+		self.assertContains(response ,'itemey 2')
+		self.assertContains(response ,'itemey 3')
+		self.assertContains(response ,'itemey 4')
+		self.assertContains(response, 'There are some to-do list, I will do it faster!')
+		
+	def test_home_page_displays_feed_more_than_five(self):
+		Item.objects.create(text='itemey 1')
+		Item.objects.create(text='itemey 2')
+		Item.objects.create(text='itemey 3')
+		Item.objects.create(text='itemey 4')
+		Item.objects.create(text='itemey 5')
+		Item.objects.create(text='itemey 6')
+		
+		response = self.client.get('/lists/the-only-list-in-the-world/')
+		
+		self.assertContains(response ,'itemey 1')
+		self.assertContains(response ,'itemey 2')
+		self.assertContains(response ,'itemey 3')
+		self.assertContains(response ,'itemey 4')
+		self.assertContains(response ,'itemey 5')
+		self.assertContains(response ,'itemey 6')
+		self.assertContains(response, 'Forget about holiday!')
+		
+
 class HomePageTest(TestCase):
 	
 	def test_root_url_resolves_to_home_page_view(self):
@@ -17,7 +72,7 @@ class HomePageTest(TestCase):
 		request = HttpRequest()
 		response = home_page(request)
 		expected_html = render_to_string('home.html')
-		#self.assertEqual(expected_html, response.content.decode() )
+		self.assertEqual(expected_html, response.content.decode() )
 		
 	def test_home_page_can_save_a_POST_request(self):
 		request = HttpRequest()
@@ -38,64 +93,13 @@ class HomePageTest(TestCase):
 		response = home_page(request)
 		
 		self.assertEqual(response.status_code, 302)
-		self.assertEqual(response['location'], '/')
+		self.assertEqual(response['location'], '/lists/the-only-list-in-the-world')
 		
 	def test_home_page_only_saves_items_when_necessary(self):
 		request = HttpRequest()
 		home_page(request)
 		self.assertEqual(Item.objects.count(),0)
 		
-	def test_home_page_displays_all_list_items(self):
-		Item.objects.create(text='itemey 1')
-		Item.objects.create(text='itemey 2')
-		
-		request = HttpRequest()
-		response = home_page(request)
-		
-		self.assertIn('itemey 1', response.content.decode())
-		self.assertIn('itemey 2', response.content.decode())
-	
-	def test_home_page_displays_feed_zero(self):
-		request = HttpRequest()
-		response = home_page(request)
-		
-		self.assertIn('Holiday, I am coming!', response.content.decode())
-		
-	def test_home_page_displays_feed_less_than_five(self):
-		Item.objects.create(text='itemey 1')
-		Item.objects.create(text='itemey 2')
-		Item.objects.create(text='itemey 3')
-		Item.objects.create(text='itemey 4')
-		
-		request = HttpRequest()
-		response = home_page(request)
-		
-		
-		self.assertIn('itemey 1', response.content.decode())
-		self.assertIn('itemey 2', response.content.decode())
-		self.assertIn('itemey 3', response.content.decode())
-		self.assertIn('itemey 4', response.content.decode())
-		self.assertIn('There are some to-do list, I will do it faster!', response.content.decode())
-		
-	def test_home_page_displays_feed_more_than_five(self):
-		Item.objects.create(text='itemey 1')
-		Item.objects.create(text='itemey 2')
-		Item.objects.create(text='itemey 3')
-		Item.objects.create(text='itemey 4')
-		Item.objects.create(text='itemey 5')
-		Item.objects.create(text='itemey 6')
-		
-		request = HttpRequest()
-		response = home_page(request)
-		
-		
-		self.assertIn('itemey 1', response.content.decode())
-		self.assertIn('itemey 2', response.content.decode())
-		self.assertIn('itemey 3', response.content.decode())
-		self.assertIn('itemey 4', response.content.decode())
-		self.assertIn('itemey 5', response.content.decode())
-		self.assertIn('itemey 6', response.content.decode())
-		self.assertIn('Forget about holiday!', response.content.decode())
 		
 		
 class ItemModelTest(TestCase):

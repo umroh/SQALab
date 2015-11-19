@@ -3,27 +3,10 @@
 		<title>To-Do lists Umroh MS</title>
 	</head>
 	<body>
-		<h1>Your To-Do list</h1>
+		<h1>Start A new To-Do list</h1>
 		<form method="POST">
 			<input name="item_text" id= "id_new_item" placeholder="Enter a to-do item"/>
 			{% csrf_token %}
 		</form>
-		
-		<table id="id_list_table">
-			{% for item in items %}
-				<tr><td>{{ forloop.counter }}: {{ item.text }}</td></tr>
-			{% endfor %}
-		</table>
-		
-		<br>
-		{% ifequal items.count 0 %}
-			{{ value|default:"Holiday, I am coming!"}}
-		{% else %}
-			{% if items.count < 5 %}
-				{{ value| default:"There are some to-do list, I will do it faster!"}}
-			{% else %}
-				{{ value| default:"Forget about holiday!"}}
-			{% endif %}
-		{% endifequal %}
 		</body>
 </html>
