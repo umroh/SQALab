@@ -13,4 +13,4 @@ def home_page(request):
 	
 	value = ''
 	
-	return render(request, 'home.html',{'items':items}, value)
+	return render(request, 'home.html',{'items':items})
