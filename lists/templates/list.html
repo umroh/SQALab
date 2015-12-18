@@ -12,12 +12,16 @@
 	</table>
 {% endblock %}
 
-{% ifequal items.count 0 %}
-	{{ value|default:"Holiday, I am coming!"}}
-{% else %}
-	{% if items.count < 5 %}
-		{{ value| default:"There are some to-do list, I will do it faster!"}}
+{% block komentar %}
+	<h4>
+	{% ifequal items.count 0 %}
+		{{ value|default:"Holiday, I am coming!"}}
 	{% else %}
-		{{ value| default:"Forget about holiday!"}}
-	{% endif %}
-{% endifequal %}
+		{% if items.count < 5 %}
+			{{ value| default:"There are some to-do list, I will do it faster!"}}
+		{% else %}
+			{{ value| default:"Forget about holiday!"}}
+		{% endif %}
+	{% endifequal %}
+	</h4>
+{% endblock %}
